@@ -19,8 +19,8 @@ class Simulation:
    		input_file1 = h5py.File(self.path+'rhOverM_Asymptotic_GeometricUnits.h5','r')
    		self.alm = []
 		self.H2 = []
-		self.dt = 0
 		self.time = 0
+		self.dt = 0
 
 
    		
