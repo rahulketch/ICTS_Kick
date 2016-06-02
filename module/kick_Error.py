@@ -58,4 +58,14 @@ def limitedModesError(path,directory):
 	kick2 = rq.getKick(simulation,7)
 	error = np.abs(kick1 - kick2)
 	return error
+def junkError(path,directory):
+	res = sortedResolution(path)
+	new_path = path + '/' + res[-1][0] + '/'
+	simulation1 = sm.Simulation(new_path,directory)
+	simulation2 = sm.Simulation(new_path,directory, relaxed = True)
+	kick1 = rq.getKick(simulation1)
+	kick2 = rq.getKick(simulation2)
+	error = np.abs(kick1 - kick2)
+	return error
+
 

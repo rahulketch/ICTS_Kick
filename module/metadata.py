@@ -19,7 +19,7 @@ class metadata:
 			line = line.split()
 			if(len(line)<2):
 				continue;
-				var = line[0].translate(None," ")
+			var = line[0].translate(None," ")
 			if var == 'initial-ADM-energy':
 				self.initial_mass = float(line[2])
 			if var == 'initial-ADM-linear-momentum':
@@ -43,4 +43,4 @@ class metadata:
 			if var == 'simulation-name':
 				self.simulation_name= line[2]
 			if var == 'relaxed-measurement-time':
-				self.relaxed_time= line[2] 
+				self.relaxed_time= float(line[2]) 
