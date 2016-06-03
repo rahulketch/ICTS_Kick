@@ -36,19 +36,28 @@ def truncError(path,directory):
 	error = np.abs(kick1 - kick2)
 	return error
 
+# def extrapolationError(path,directory):
+# 	res = sortedResolution(path)
+# 	new_path = path + '/' + res[-1][0] + '/'
+# 	simulation1 = sm.Simulation(new_path,'Extrapolated_N2.dir')
+# 	simulation2 = sm.Simulation(new_path,'Extrapolated_N3.dir')
+# 	simulation3 = sm.Simulation(new_path,'Extrapolated_N4.dir')
+# 	simulation4 = sm.Simulation(new_path,'OutermostExtraction.dir')
+# 	kick1 = rq.getKick(simulation1)
+# 	kick2 = rq.getKick(simulation2)
+# 	kick3 = rq.getKick(simulation3)
+# 	kick4 = rq.getKick(simulation4)
+# 	kick = [kick1,kick2,kick3]
+# 	error = np.abs(max(kick)-min(kick))
+# 	return error
 def extrapolationError(path,directory):
 	res = sortedResolution(path)
 	new_path = path + '/' + res[-1][0] + '/'
 	simulation1 = sm.Simulation(new_path,'Extrapolated_N2.dir')
 	simulation2 = sm.Simulation(new_path,'Extrapolated_N3.dir')
-	simulation3 = sm.Simulation(new_path,'Extrapolated_N4.dir')
-	simulation4 = sm.Simulation(new_path,'OutermostExtraction.dir')
 	kick1 = rq.getKick(simulation1)
 	kick2 = rq.getKick(simulation2)
-	kick3 = rq.getKick(simulation3)
-	kick4 = rq.getKick(simulation4)
-	kick = [kick1,kick2,kick3]
-	error = np.abs(max(kick)-min(kick))
+	error = np.abs(kick1 - kick2)
 	return error
 def limitedModesError(path,directory):
 	res = sortedResolution(path)
@@ -68,4 +77,21 @@ def junkError(path,directory):
 	error = np.abs(kick1 - kick2)
 	return error
 
+def downSampleError(path,directory):
+	res = sortedResolution(path)
+	new_path = path + '/' + res[-1][0] + '/'
+	simulation1 = sm.Simulation(new_path,directory)
+	simulation2 = sm.Simulation(new_path,directory, relaxed=False, downsample = 2 )
+	simulation3 = sm.Simulation(new_path,directory, relaxed=False, downsample = 4 )
+	kick1 = rq.getKick(simulation1)
+	kick2 = rq.getKick(simulation2)
+	kick3 = rq.getKick(simulation3)
+	#print(kick1, kick2, kick3) #Remove This!!
+	error = np.abs(kick1-kick2)
+	return error
+def getHighResSim(path,directory):
+	res = sortedResolution(path)
+	new_path = path + '/' + res[-1][0] + '/'
+	simulation1 = sm.Simulation(new_path,directory)
+	return simulation1
 

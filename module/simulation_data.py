@@ -4,11 +4,11 @@ import metadata
 import bisect
 class Simulation:
 	#The relaxed parameter decides if the calculations are to be done from the beginning or from the relaxed time
-	def __init__(self,path,directory,relaxed = False):
+	def __init__(self,path,directory,relaxed = False,downsample=1):
 		self.path = path
 		self.directory = directory
 		self.metadata = metadata.metadata(path)
-		self.Evaluate(relaxed)
+		self.Evaluate(relaxed,downsample)
 	def ALM(self,l,m):
 		if m>l or m<-l or l<2 or l>8:
 			return 0
@@ -18,7 +18,8 @@ class Simulation:
 			return 0
 		return self.H2[l-2][m+l]
 	#The relaxed parameter decides if the calculations are to be done from the beginning or from the relaxed time
-   	def Evaluate(self,relaxed=False): 
+	#The downsample parameter downsamples in the input data. Used for error analysis
+   	def Evaluate(self,relaxed=False, downsample = 1): 
    		input_file1 = h5py.File(self.path+'rhOverM_Asymptotic_GeometricUnits.h5','r')
    		self.alm = []
 		self.H2 = []
@@ -39,6 +40,9 @@ class Simulation:
 					i = bisect.bisect_right(t,self.metadata.relaxed_time)
 					t = t[i:]
 					H = H[i:]
+
+				H = H[::downsample] #downsamples the data accordingly
+				t = t[::downsample]
 
 				self.time = t
 				self.dt = np.diff(t)

@@ -15,6 +15,7 @@ class metadata:
 		"""
 		meta = open(self.path+'metadata.txt','r')
 		for line in meta:
+			line = line.replace(',',', ') #This line was added to make the code compatiable with all simulation.(see simulation 152)
 			line = line.translate(None,",")
 			line = line.split()
 			if(len(line)<2):
