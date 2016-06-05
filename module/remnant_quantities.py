@@ -1,8 +1,10 @@
 import numpy as np
+def norm(vector):
+		return np.sqrt(vector[0]*vector[0]+vector[1]*vector[1]+vector[2]*vector[2])	
 
-def getRemnantMass(Sim):
+def getRemnantMass(Sim,lmax=8):
 	de = 0
-	for l in range(2,9):
+	for l in range(2,lmax+1):
 		for m in range(-l,l+1):
 			de = de + Sim.ALM(l,m)*np.conj(Sim.ALM(l,m))
 	E = np.cumsum(de*Sim.dt)/(16*np.pi) 
@@ -10,13 +12,17 @@ def getRemnantMass(Sim):
 	final_mass = np.real(Sim.metadata.initial_mass - Radiated_Energy) 
 	return final_mass
 
-def getRemnantSpin(Sim):
+def getRemnantSpin(Sim,lmax=8):
+	
+	return norm(getRemnantSpinComponents(Sim,lmax))
+
+def getRemnantSpinComponents(Sim,lmax=8):
 	def f(l,m):
 		return np.sqrt((l-m)*(l+m+1))
 	djx = (0+0j)
 	djy = djx
 	djz = djx
-	for l in range(2,9):
+	for l in range(2,lmax+1):
 		for m in range(-l,l+1):
 			djx = djx + np.imag(Sim.Hcomp(l,m)*(f(l,m)*np.conj(Sim.ALM(l,m+1)) + f(l,-m)*np.conj(Sim.ALM(l,m-1))))
 			djy = djy - np.real(Sim.Hcomp(l,m)*(f(l,m)*np.conj(Sim.ALM(l,m+1)) - f(l,-m)*np.conj(Sim.ALM(l,m-1))))
@@ -30,8 +36,6 @@ def getRemnantSpin(Sim):
 	return final_spin	
 
 def getKick(Sim, lmax=8):
-	def norm(vector):
-		return np.sqrt(vector[0]*vector[0]+vector[1]*vector[1]+vector[2]*vector[2])
 	speed_of_light = 299792.458
 	def a(l,m):
 		return np.sqrt((1.0+0.0j)*(l-m)*(l+m+1.0))/(l*(l+1.0))
@@ -58,32 +62,3 @@ def getKick(Sim, lmax=8):
 	#return Kick
 	#return [norm(Kick),Kick]
 	return norm(Kick)
-def getKick_Relaxed(Sim, lmax=8):
-	def norm(vector):
-		return np.sqrt(vector[0]*vector[0]+vector[1]*vector[1]+vector[2]*vector[2])
-	speed_of_light = 299792.458
-	def a(l,m):
-		return np.sqrt((1.0+0.0j)*(l-m)*(l+m+1.0))/(l*(l+1.0))
-	def b(l,m):
-		return (np.sqrt((1+0.0j)*(l-2.0)*(l+2.0)*(l+m)*(l+m-1.0)/(2.0*l-1.0)/(2.0*l+1.0)))/(2.0*l)
-	def c(l,m):
-		return 2.0*m/(l*(l+1.0))
-	def d(l,m):
-		return (np.sqrt((1.0+0.0j)*(l-2.0)*(l+2.0)*(l-m)*(l+m)/(2.0*l-1.0)/(2.0*l+1)))/l
-
-	dp_plus = (0.0+0.0j)
-	dp_z = dp_plus
-	for l in range(2,lmax+1):
-		for m in range(-l,l+1):
-			dp_plus = dp_plus+Sim.ALM(l,m)*(a(l,m)*np.conj(Sim.ALM(l,m+1)) + b(l,-m)*np.conj(Sim.ALM(l-1,m+1)) - b(l+1,m+1)*np.conj(Sim.ALM(l+1,m+1)))
-			dp_z = dp_z + Sim.ALM(l,m)*(c(l,m)*np.conj(Sim.ALM(l,m)) + d(l,m)*np.conj(Sim.ALM(l-1,m)) + d(l+1,m)*np.conj(Sim.ALM(l+1,m)))
-	p_plus = np.cumsum(dp_plus*Sim.dt)/(8*np.pi)
-	PZ = np.real(np.cumsum(dp_z*Sim.dt)/(16*np.pi))
-	PX = np.real(p_plus)
-	PY = np.imag(p_plus)
-	P = np.array([PX,PY,PZ])
-	Radiated_P = np.array([PX[-1],PY[-1],PZ[-1]])
-	Kick = -1 * Radiated_P/Sim.metadata.remnant_mass * speed_of_light
-	#return [norm(Kick),Kick]
-	return norm(Kick)
-

@@ -2,13 +2,15 @@ import numpy as np
 import os
 import remnant_quantities as rq
 import simulation_data as sm
-class Kick_Error():
+class Error():
 	def __init__(self,path,directory):
 		self.path = path
 		self.directory = directory
 		self.sortedResolution()
 		self.setSimulation() 
 		self.setKick()
+		self.setSpin()
+		self.setMass()
 	
 	def sortedResolution(self):
 		"""Sorts the resolution orders. Used to extract the highest resolution dataset"""
@@ -26,14 +28,26 @@ class Kick_Error():
 		self.new_path = self.path + '/' + self.res[-1][0] + '/'
 		self.simulation = sm.Simulation(self.new_path,self.directory)
 
+	def getHighResSim(self):
+		return self.simulation
 
 	def setKick(self):
 		self.kick = rq.getKick(self.simulation)
+	def setSpin(self):
+		self.spin = rq.getRemnantSpin(self.simulation)
+	def setMass(self):
+		self.mass = rq.getRemnantMass(self.simulation)
 
 
 	def highResKick(self):
 		"""Returns the kick using the highest resolution available"""
 		return self.kick
+	def highResSpin(self):
+		"""Returns the remnant spin using the highest resolution available"""
+		return self.spin
+	def highResMass(self):
+		"""Returns the remnant mass using the highest resolution available"""
+		return self.mass
 
 	def getSecondHighestResolution(self):
 		"""Returns the simulation with the 2nd highest resolution. Used for calculating truncation error"""
@@ -51,8 +65,7 @@ class Kick_Error():
 
 	def truncErrorKick(self):
 		"""Compares the higest resolution with the next highest resolution to 
-		find the difference and returns that value as the error"""
-		
+		find the difference and returns that value as the error"""		
 		if len(self.res)<2:
 			return -1
 		sim2 =  self.getSecondHighestResolution()
@@ -60,28 +73,90 @@ class Kick_Error():
 		error = np.abs(self.kick - kick2)
 		return error
 
+	def truncErrorSpin(self):
+		"""Compares the higest resolution with the next highest resolution to 
+		find the difference and returns that value as the error"""		
+		if len(self.res)<2:
+			return -1
+		sim2 =  self.getSecondHighestResolution()
+		spin2 = rq.getRemnantSpin(sim2)
+		error = np.abs(self.spin - spin2)
+		return error
+	def truncErrorMass(self):
+		"""Compares the higest resolution with the next highest resolution to 
+		find the difference and returns that value as the error"""		
+		if len(self.res)<2:
+			return -1
+		sim2 =  self.getSecondHighestResolution()
+		mass2 = rq.getRemnantMass(sim2)
+		error = np.abs(self.mass - mass2)
+		return error
+
 	def extrapolationErrorKick(self):
 		simulation2 = self.getOutermostSimulation()
 		kick2 = rq.getKick(simulation2)
 		error = np.abs(self.kick - kick2)
 		return error
+	def extrapolationErrorSpin(self):
+		simulation2 = self.getOutermostSimulation()
+		spin2 = rq.getRemnantSpin(simulation2)
+		error = np.abs(self.spin - spin2)
+		return error
+	def extrapolationErrorMass(self):
+		simulation2 = self.getOutermostSimulation()
+		mass2 = rq.getRemnantMass(simulation2)
+		error = np.abs(self.mass - mass2)
+		return error
+
+
 	def limitedModesErrorKick(self):		
 		kick2 = rq.getKick(self.simulation,7)
 		error = np.abs(self.kick - kick2)
 		return error
+	def limitedModesErrorSpin(self):		
+		spin2 = rq.getRemnantSpin(self.simulation,7)
+		error = np.abs(self.spin - spin2)
+		return error
+	def limitedModesErrorMass(self):		
+		mass2 = rq.getRemnantMass(self.simulation,7)
+		error = np.abs(self.mass - mass2)
+		return error
+
 	def junkErrorKick(self):
 		simulation2 = self.getRelaxedTimeSimulation()
 		kick2 = rq.getKick(simulation2)
 		error = np.abs(self.kick - kick2)
 		return error
+	def junkErrorSpin(self):
+		simulation2 = self.getRelaxedTimeSimulation()
+		spin2 = rq.getRemnantSpin(simulation2)
+		error = np.abs(self.spin - spin2)
+		return error
+	def junkErrorMass(self):
+		simulation2 = self.getRelaxedTimeSimulation()
+		mass2 = rq.getRemnantMass(simulation2)
+		error = np.abs(self.mass - mass2)
+		return error
+
 
 	def downSampleErrorKick(self):
-
 		simulation2 = self.getDownsampledSimulation()
 		kick2 = rq.getKick(simulation2)
 		error = np.abs(self.kick-kick2)
 		return error
+	def downSampleErrorSpin(self):
+		simulation2 = self.getDownsampledSimulation()
+		spin2 = rq.getRemnantSpin(simulation2)
+		error = np.abs(self.spin-spin2)
+		return error
+	def downSampleErrorMass(self):
+		simulation2 = self.getDownsampledSimulation()
+		mass2 = rq.getRemnantMass(simulation2)
+		error = np.abs(self.mass-mass2)
+		return error
+
+
+
 	
-	def getHighResSim(self):
-		return self.simulation
+
 
