@@ -55,9 +55,9 @@ def getKick(Sim, lmax=8):
 	P = np.array([PX,PY,PZ])
 	Radiated_P = np.array([PX[-1],PY[-1],PZ[-1]])
 	Kick = -1 * Radiated_P/Sim.metadata.remnant_mass * speed_of_light
-	return Kick
+	#return Kick
 	#return [norm(Kick),Kick]
-	#return norm(Kick)
+	return norm(Kick)
 def getKick_Relaxed(Sim, lmax=8):
 	def norm(vector):
 		return np.sqrt(vector[0]*vector[0]+vector[1]*vector[1]+vector[2]*vector[2])
