@@ -30,6 +30,11 @@ class Error():
 
 	def getHighResSim(self):
 		return self.simulation
+	def isMoreThanOneRes(self):
+		"""Used to check if more than one resolution is available"""
+		if len(self.res)<2:
+			return False;
+		return True;
 
 	def setKick(self):
 		self.kick = rq.getKick(self.simulation)
@@ -67,7 +72,7 @@ class Error():
 		"""Compares the higest resolution with the next highest resolution to 
 		find the difference and returns that value as the error"""		
 		if len(self.res)<2:
-			return -1
+			return 0
 		sim2 =  self.getSecondHighestResolution()
 		kick2 = rq.getKick(sim2)
 		error = np.abs(self.kick - kick2)
@@ -77,7 +82,7 @@ class Error():
 		"""Compares the higest resolution with the next highest resolution to 
 		find the difference and returns that value as the error"""		
 		if len(self.res)<2:
-			return -1
+			return 0
 		sim2 =  self.getSecondHighestResolution()
 		spin2 = rq.getRemnantSpin(sim2)
 		error = np.abs(self.spin - spin2)
@@ -86,7 +91,7 @@ class Error():
 		"""Compares the higest resolution with the next highest resolution to 
 		find the difference and returns that value as the error"""		
 		if len(self.res)<2:
-			return -1
+			return 0
 		sim2 =  self.getSecondHighestResolution()
 		mass2 = rq.getRemnantMass(sim2)
 		error = np.abs(self.mass - mass2)

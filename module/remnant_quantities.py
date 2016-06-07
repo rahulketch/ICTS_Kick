@@ -1,6 +1,14 @@
 import numpy as np
 def norm(vector):
 		return np.sqrt(vector[0]*vector[0]+vector[1]*vector[1]+vector[2]*vector[2])	
+def deviation(A,B):
+	return np.abs(A-B)
+def errorQuadrature(errors):
+	"""Considers Error Estimates to be independent"""
+	Total_Error = 0.0
+	for i in errors:
+		Total_Error = Total_Error + i[0]*i[0]
+	return np.sqrt(Total_Error)
 
 def getRemnantMass(Sim,lmax=8):
 	de = 0

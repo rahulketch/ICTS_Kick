@@ -40,8 +40,21 @@ class metadata:
 			if var == 'initial-spin2':
 				self.initial_spin2 = np.array([float(line[2]),float(line[3]),float(line[4])])
 			if var == 'alternative-names':
-				self.alt_name = line[2]
+				self.alt_name = line[2:]
 			if var == 'simulation-name':
 				self.simulation_name= line[2]
 			if var == 'relaxed-measurement-time':
-				self.relaxed_time= float(line[2]) 
+				self.relaxed_time= float(line[2])
+			if var == 'relaxed-eccentricity':
+				self.relaxed_eccentricity = line[2]
+			if var == 'number-of-orbits':
+				self.no_of_orbits = float(line[2])
+			if var == 'relaxed-spin1':
+				self.relaxed_spin1 = np.array([float(line[2]),float(line[3]),float(line[4])])
+			if var == 'relaxed-spin2':
+				self.relaxed_spin2 = np.array([float(line[2]),float(line[3]),float(line[4])]) 
+			if var == 'relaxed-mass1':
+				self.relaxed_mass1 = float(line[2])
+			if var == 'relaxed-mass2':
+				self.relaxed_mass2 = float(line[2])
+
