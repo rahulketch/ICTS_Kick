@@ -9,6 +9,7 @@ class metadata:
 	def __init__(self,path):
 		self.path = path
 		self.getMeta()
+		self.Normalize()
 	def getMeta(self):
 		"""
 		This method extracts the values of the relevant quantities and stores them to the corresponding variables
@@ -57,4 +58,18 @@ class metadata:
 				self.relaxed_mass1 = float(line[2])
 			if var == 'relaxed-mass2':
 				self.relaxed_mass2 = float(line[2])
+	def Normalize(self):
+		"""This function normalizes the quantities to m1+m2 = 1 using the relaxed masses"""
+		m1 = self.relaxed_mass1
+		m2 = self.relaxed_mass2
+		m = m1+m2
+		self.q = m1/m2
+		self.initial_j = self.initial_j/(m**2.)
+		self.initial_mass = self.initial_mass/m
+		self.initial_p = self.initial_p/m
+		self.remnant_spin = self.remnant_spin/(m*m)
+		self.remnant_mass = self.remnant_mass/m
+		
+
+
 

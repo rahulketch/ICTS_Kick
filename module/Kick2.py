@@ -24,6 +24,8 @@ f.write('Remnant_Mass_Hor,Remnant_Mass_Calc,Deviation_from_Horizon,Error_Estimat
 f.write('Max_Error_Source,Kick(km/s),Total_Error(km/s),Max_Error,Max_Error_Source,')
 f.write('V_mode(km/s),V_trunc(km/s),V_extrap(km/s),V_junk(km/s),V_downsample(km/s)\n')
 for file in data:
+    if file != '170':
+        continue
     path = main_path + file
     err = errors.Error(path,directory)
     sim = err.getHighResSim()
