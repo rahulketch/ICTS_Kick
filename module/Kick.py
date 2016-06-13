@@ -8,11 +8,10 @@ import os
 import errors
 import simulation_data as sd
 import remnant_quantities as rq
-main_path = '../../Data/'
+main_path = '../data/simulations/'
 directory = 'Extrapolated_N2.dir'
 data = []
 data = os.walk(main_path).next()[1]
-err = errors.Error('../../Data/011',directory)
 
 
 # In[6]:
@@ -23,12 +22,19 @@ f.write('Remnant_spin_hor,Calculated_Spin,Deviation_from_Horizon,Error_Estimate,
 f.write('Remnant_Mass_Hor,Remnant_Mass_Calc,Deviation_from_Horizon,Error_Estimate,Max_Error,')
 f.write('Max_Error_Source,Kick(km/s),Total_Error(km/s),Max_Error,Max_Error_Source,')
 f.write('V_mode(km/s),V_trunc(km/s),V_extrap(km/s),V_junk(km/s),V_downsample(km/s)\n')
+countdown = len(data)
 for file in data:
+    print("Started: " + file)
     path = main_path + file
     err = errors.Error(path,directory)
     sim = err.getHighResSim()
     Name = sim.metadata.simulation_name
     Alt_name_list = sim.metadata.alt_name
+    err.setKick()
+    err.setSpin()
+    err.setMass()
+
+
     for name in Alt_name_list:
         if name.startswith('SXS'):
             Alt_name = name
@@ -65,10 +71,16 @@ for file in data:
                   [err.extrapolationErrorMass(),'Extrapolation'],[err.junkErrorMass(),'Junk Radiation']
                   ,[err.downSampleErrorMass(),'Downsampling']]
     total_mass_error = rq.errorQuadrature(mass_error)
+
+    V_trunc = err.truncErrorKick()
+    V_mode = err.limitedModesErrorKick()
+    V_extrap = err.extrapolationErrorKick()
+    V_junk = err.junkErrorKick()
+    V_downsample = err.downSampleErrorKick()
     
-    kick_error = [[err.truncErrorKick(),'Truncation'],[err.limitedModesErrorKick(),'Limited Modes'],
-                  [err.extrapolationErrorKick(),'Extrapolation'],[err.junkErrorKick(),'Junk Radiation']
-                  ,[err.downSampleErrorKick(),'Downsampling']]
+    kick_error = [[V_trunc,'Truncation'],[V_mode,'Limited Modes'],
+                  [V_extrap,'Extrapolation'],[V_junk,'Junk Radiation']
+                  ,[V_downsample,'Downsampling']]
     total_kick_error = rq.errorQuadrature(kick_error)
     
     spin_error = sorted(spin_error)
@@ -95,11 +107,7 @@ for file in data:
                                                      Max_Error_mass,Max_Error_Source_mass))
     
     Kick = err.highResKick()
-    V_trunc = err.truncErrorKick()
-    V_mode = err.limitedModesErrorKick()
-    V_extrap = err.extrapolationErrorKick()
-    V_junk = err.junkErrorKick()
-    V_downsample = err.downSampleErrorKick()
+
     if(More_than_one_res):
         f.write('%f,%f,%f,%s,'%(Kick,total_kick_error,kick_error[-1][0],kick_error[-1][1]))
         f.write('%f,%f,%f,%f,%f'%(V_mode,V_trunc,V_extrap,V_junk,V_downsample))
@@ -107,7 +115,8 @@ for file in data:
         f.write('%f,%f*,%f,%s,'%(Kick,total_kick_error,kick_error[-1][0],kick_error[-1][1]))
         f.write('%f,-,%f,%f,%f'%(V_mode,V_extrap,V_junk,V_downsample))
     f.write('\n')
-    print('Done: '+Alt_name)
+    print('Done: '+Alt_name + ' Left:%d'%(countdown))
+    countdown = countdown - 1
 f.close()
     
 

@@ -8,9 +8,9 @@ class Error():
 		self.directory = directory
 		self.sortedResolution()
 		self.setSimulation() 
-		self.setKick()
-		self.setSpin()
-		self.setMass()
+		#self.setKick()
+		#self.setSpin()
+		#self.setMass()
 	
 	def sortedResolution(self):
 		"""Sorts the resolution orders. Used to extract the highest resolution dataset"""
@@ -63,10 +63,10 @@ class Error():
 		return sm.Simulation(self.new_path,'OutermostExtraction.dir')
 	def getRelaxedTimeSimulation(self):
 		"""Returns the simulation with relaxed time to get rid of junk radiation"""
-		return sm.Simulation(self.new_path,self.directory,relaxed = True)
+		return sm.Simulation(self.new_path,self.directory,relaxed = False)
 	def getDownsampledSimulation(self):
 		"""Downsamples the data by 2 to estimate errors due to numerical routines"""
-		return sm.Simulation(self.new_path,self.directory,relaxed = False, downsample = 2)
+		return sm.Simulation(self.new_path,self.directory,downsample = 2)
 
 	def truncErrorKick(self):
 		"""Compares the higest resolution with the next highest resolution to 
