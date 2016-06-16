@@ -8,7 +8,7 @@ import os
 import errors
 import simulation_data as sd
 import remnant_quantities as rq
-main_path = '../data/simulations/'
+main_path = '../../Data/'
 directory = 'Extrapolated_N2.dir'
 data = []
 data = os.walk(main_path).next()[1]

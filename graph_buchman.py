@@ -23,11 +23,12 @@ plt.figure()
 #plt.plot(itemlist[:,0],itemlist[:,1],marker = 'o',linestyle = 'None')
 for i in range(len(eta)):
 	plt.errorbar(eta[i],kick[i],yerr=kick_error[i], linestyle = 'None', marker = '.',color='b' )
-plt.plot(n,fit_kick,label = 'Fit',color='r')
+plt.plot(n,fit_kick,label = 'Fit from Buchman et al',color='r')
 plt.ylim(-1)
 plt.xlabel('$\eta$')
 plt.ylabel('Kick (km/s)')
 plt.title('Non Spinning Kick')
+plt.legend()
 datacursor()
 plt.savefig('buchman.jpg')
 

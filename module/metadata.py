@@ -58,6 +58,10 @@ class metadata:
 				self.relaxed_mass1 = float(line[2])
 			if var == 'relaxed-mass2':
 				self.relaxed_mass2 = float(line[2])
+			if var == 'common-horizon-time':
+				self.common_horizon_time = float(line[2])
+			if var == 'remnant-velocity':
+				self.coordinate_velocity = np.array([float(line[2]),float(line[3]),float(line[4])])
 	def Normalize(self):
 		"""This function normalizes the quantities to m1+m2 = 1 using the relaxed masses"""
 		m1 = self.relaxed_mass1
@@ -69,6 +73,9 @@ class metadata:
 		self.initial_p = self.initial_p/m
 		self.remnant_spin = self.remnant_spin/(m**2)
 		self.remnant_mass = self.remnant_mass/m
+		for name in self.alt_name:
+			if name.startswith('SXS'):
+				self.alt_name = name
 		
 
 
