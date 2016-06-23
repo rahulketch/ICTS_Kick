@@ -83,3 +83,30 @@ def getKickComponents(Sim, lmax=8):
 def getKick(Sim,lmax=8):
 	"""Returns the magnitude of the Kick"""
 	return norm(getKickComponents(Sim,lmax))
+def getRadiatedMomentum(Sim,lmax = 8):
+	"""This functions calculates the radiated linear momentum from eqs (3.14) and (3.15) of Ruiz et al. arXiv:0707.4654 """ 		
+	speed_of_light = 299792.458
+	def a(l,m):
+		return np.sqrt((1.0+0.0j)*(l-m)*(l+m+1.0))/(l*(l+1.0))
+	def b(l,m):
+		return (np.sqrt((1+0.0j)*(l-2.0)*(l+2.0)*(l+m)*(l+m-1.0)/(2.0*l-1.0)/(2.0*l+1.0)))/(2.0*l)
+	def c(l,m):
+		return 2.0*m/(l*(l+1.0))
+	def d(l,m):
+		return (np.sqrt((1.0+0.0j)*(l-2.0)*(l+2.0)*(l-m)*(l+m)/(2.0*l-1.0)/(2.0*l+1)))/l
+
+	dp_plus = (0.0+0.0j)
+	dp_z = dp_plus
+	for l in range(2,lmax+1):
+		for m in range(-l,l+1):
+			dp_plus = dp_plus+Sim.ALM(l,m)*(a(l,m)*np.conj(Sim.ALM(l,m+1)) + b(l,-m)*np.conj(Sim.ALM(l-1,m+1)) - b(l+1,m+1)*np.conj(Sim.ALM(l+1,m+1)))
+			dp_z = dp_z + Sim.ALM(l,m)*(c(l,m)*np.conj(Sim.ALM(l,m)) + d(l,m)*np.conj(Sim.ALM(l-1,m)) + d(l+1,m)*np.conj(Sim.ALM(l+1,m)))
+	
+
+
+	p_plus = np.cumsum(dp_plus*Sim.dt)/(8*np.pi)
+	PZ = np.real(np.cumsum(dp_z*Sim.dt)/(16*np.pi))
+	PX = np.real(p_plus)
+	PY = np.imag(p_plus)
+	P = np.array([PX,PY,PZ])
+	return P

@@ -2,6 +2,7 @@ import numpy as np
 import os
 import remnant_quantities as rq
 import simulation_data as sm
+import metadata
 class Error():
 	def __init__(self,path,directory):
 		self.path = path
@@ -27,6 +28,7 @@ class Error():
 		"""Sets the simulation with the highest available resolution"""
 		self.new_path = self.path + '/' + self.res[-1][0] + '/'
 		self.simulation = sm.Simulation(self.new_path,self.directory)
+		self.metadata = self.simulation.metadata
 
 	def getHighResSim(self):
 		return self.simulation
@@ -219,6 +221,10 @@ class Error():
 		self.setKickErrors()
 		self.setSpinErrors()
 		self.setMassErrors()
+
+	def deleteSimulation(self):
+		"""This is just to be able to store a variable of this class without taking too much memory"""
+		self.simulation = None
 	
 
 
