@@ -7,10 +7,14 @@ def errorQuadrature(errors):
 	"""Considers Error Estimates to be independent"""
 	Total_Error = 0.0
 	for i in errors:
-		Total_Error = Total_Error + i[0]*i[0]
+		Total_Error = Total_Error + i*i
 	return np.sqrt(Total_Error)
 
 def getRemnantMass(Sim,lmax=8):
+	"""This functions calculates the radiated energy from eq (3.8) of Ruiz et al. arXiv:0707.4654 and subtracts to from
+		the initial ADM total Energy to find the Remnant Mass.
+
+		Sim is the simulaton to be passed and lmax is the max Ylm mode to be considered""" 
 	de = 0
 	for l in range(2,lmax+1):
 		for m in range(-l,l+1):
@@ -21,10 +25,14 @@ def getRemnantMass(Sim,lmax=8):
 	return final_mass
 
 def getRemnantSpin(Sim,lmax=8):
-	
+	"""Returns the Magnitude of the Remnant Spin"""
 	return norm(getRemnantSpinComponents(Sim,lmax))
 
 def getRemnantSpinComponents(Sim,lmax=8):
+	"""This functions calculates the radiated angular momentum from eqs (3.22), (3.23) and (3.24) of Ruiz et al. arXiv:0707.4654 
+		and subtracts to from the initial ADM angular momentum to find the Remnant Spin Components.
+
+		Sim is the simulaton to be passed and lmax is the max Ylm mode to be considered""" 	
 	def f(l,m):
 		return np.sqrt((l-m)*(l+m+1))
 	djx = (0+0j)
@@ -43,7 +51,11 @@ def getRemnantSpinComponents(Sim,lmax=8):
 	final_spin = Sim.metadata.initial_j - Radiated_J
 	return final_spin	
 
-def getKick(Sim, lmax=8):
+def getKickComponents(Sim, lmax=8):
+	"""This functions calculates the radiated linear momentum from eqs (3.14) and (3.15) of Ruiz et al. arXiv:0707.4654 
+		and uses to to calculated to final kick components.
+
+		Sim is the simulaton to be passed and lmax is the max Ylm mode to be considered""" 		
 	speed_of_light = 299792.458
 	def a(l,m):
 		return np.sqrt((1.0+0.0j)*(l-m)*(l+m+1.0))/(l*(l+1.0))
@@ -67,6 +79,7 @@ def getKick(Sim, lmax=8):
 	P = np.array([PX,PY,PZ])
 	Radiated_P = np.array([PX[-1],PY[-1],PZ[-1]])
 	Kick = -1 * Radiated_P/Sim.metadata.remnant_mass * speed_of_light
-	#return Kick
-	#return [norm(Kick),Kick]
-	return norm(Kick)
+	return Kick
+def getKick(Sim,lmax=8):
+	"""Returns the magnitude of the Kick"""
+	return norm(getKickComponents(Sim,lmax))

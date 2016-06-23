@@ -68,100 +68,157 @@ class Error():
 		"""Downsamples the data by 2 to estimate errors due to numerical routines"""
 		return sm.Simulation(self.new_path,self.directory,downsample = 2)
 
-	def truncErrorKick(self):
+	def setTruncErrorKick(self):
 		"""Compares the higest resolution with the next highest resolution to 
 		find the difference and returns that value as the error"""		
 		if len(self.res)<2:
-			return 0
+			self.truncErrorKick = 0.0
+			return
 		sim2 =  self.getSecondHighestResolution()
 		kick2 = rq.getKick(sim2)
 		error = np.abs(self.kick - kick2)
-		return error
+		self.truncErrorKick = error
 
-	def truncErrorSpin(self):
+	def setTruncErrorSpin(self):
 		"""Compares the higest resolution with the next highest resolution to 
 		find the difference and returns that value as the error"""		
 		if len(self.res)<2:
-			return 0
+			self.truncErrorSpin = 0.0
+			return
 		sim2 =  self.getSecondHighestResolution()
 		spin2 = rq.getRemnantSpin(sim2)
 		error = np.abs(self.spin - spin2)
-		return error
-	def truncErrorMass(self):
+		self.truncErrorSpin = error
+	def setTruncErrorMass(self):
 		"""Compares the higest resolution with the next highest resolution to 
 		find the difference and returns that value as the error"""		
 		if len(self.res)<2:
-			return 0
+			self.truncErrorMass = 0.0
+			return
 		sim2 =  self.getSecondHighestResolution()
 		mass2 = rq.getRemnantMass(sim2)
 		error = np.abs(self.mass - mass2)
-		return error
+		self.truncErrorMass = error
 
-	def extrapolationErrorKick(self):
+	def setExtrapolationErrorKick(self):
+		"""Compares with the OutermostKick"""
 		simulation2 = self.getOutermostSimulation()
 		kick2 = rq.getKick(simulation2)
 		error = np.abs(self.kick - kick2)
-		return error
-	def extrapolationErrorSpin(self):
+		self.extrapolationErrorKick = error
+	def setExtrapolationErrorSpin(self):
+		"""Compares with the OutermostKick"""
 		simulation2 = self.getOutermostSimulation()
 		spin2 = rq.getRemnantSpin(simulation2)
 		error = np.abs(self.spin - spin2)
-		return error
-	def extrapolationErrorMass(self):
+		self.extrapolationErrorSpin = error
+	def setExtrapolationErrorMass(self):
+		"""Compares with the OutermostKick"""
 		simulation2 = self.getOutermostSimulation()
 		mass2 = rq.getRemnantMass(simulation2)
 		error = np.abs(self.mass - mass2)
-		return error
+		self.extrapolationErrorMass = error
 
 
-	def limitedModesErrorKick(self):		
+	def setLimitedModesErrorKick(self):	
+		"""Takes Ylm modes till l = 7 and compares with l=8"""	
 		kick2 = rq.getKick(self.simulation,7)
 		error = np.abs(self.kick - kick2)
-		return error
-	def limitedModesErrorSpin(self):		
+		self.limitedModesErrorKick = error
+	def setLimitedModesErrorSpin(self):
+		"""Takes Ylm modes till l = 7 and compares with l=8"""			
 		spin2 = rq.getRemnantSpin(self.simulation,7)
 		error = np.abs(self.spin - spin2)
-		return error
-	def limitedModesErrorMass(self):		
+		self.limitedModesErrorSpin = error
+	def setLimitedModesErrorMass(self):
+		"""Takes Ylm modes till l = 7 and compares with l=8"""			
 		mass2 = rq.getRemnantMass(self.simulation,7)
 		error = np.abs(self.mass - mass2)
-		return error
+		self.limitedModesErrorMass = error
 
-	def junkErrorKick(self):
+	def setJunkErrorKick(self):
+		"""Finds the value by doing the integration before the relaxed time as well 
+			and quotes the difference"""
 		simulation2 = self.getRelaxedTimeSimulation()
 		kick2 = rq.getKick(simulation2)
 		error = np.abs(self.kick - kick2)
-		return error
-	def junkErrorSpin(self):
+		self.junkErrorKick = error
+	def setJunkErrorSpin(self):
+		"""Finds the value by doing the integration before the relaxed time as well 
+			and quotes the difference"""
 		simulation2 = self.getRelaxedTimeSimulation()
 		spin2 = rq.getRemnantSpin(simulation2)
 		error = np.abs(self.spin - spin2)
-		return error
-	def junkErrorMass(self):
+		self.junkErrorSpin = error
+	def setJunkErrorMass(self):
+		"""Finds the value by doing the integration before the relaxed time as well 
+			and quotes the difference"""
 		simulation2 = self.getRelaxedTimeSimulation()
 		mass2 = rq.getRemnantMass(simulation2)
 		error = np.abs(self.mass - mass2)
-		return error
+		self.junkErrorMass = error
 
 
-	def downSampleErrorKick(self):
+	def setDownSampleErrorKick(self):
+		"""Divides the time resolution by a factor of 2 and compares the result"""
 		simulation2 = self.getDownsampledSimulation()
 		kick2 = rq.getKick(simulation2)
 		error = np.abs(self.kick-kick2)
-		return error
-	def downSampleErrorSpin(self):
+		self.downSampleErrorKick = error
+	def setDownSampleErrorSpin(self):
+		"""Divides the time resolution by a factor of 2 and compares the result"""
 		simulation2 = self.getDownsampledSimulation()
 		spin2 = rq.getRemnantSpin(simulation2)
 		error = np.abs(self.spin-spin2)
-		return error
-	def downSampleErrorMass(self):
+		self.downSampleErrorSpin = error
+	def setDownSampleErrorMass(self):
+		"""Divides the time resolution by a factor of 2 and compares the result"""
 		simulation2 = self.getDownsampledSimulation()
 		mass2 = rq.getRemnantMass(simulation2)
 		error = np.abs(self.mass-mass2)
-		return error
+		self.downSampleErrorMass = error
+	
+	def setTotalErrorKick(self):
+		"""Adds the errors in quadrature"""
+		self.totalErrorKick = rq.errorQuadrature(np.array([self.truncErrorKick,self.extrapolationErrorKick,self.limitedModesErrorKick,
+			self.junkErrorKick,self.downSampleErrorKick]))
+	def setTotalErrorSpin(self):
+		"""Adds the errors in quadrature"""
+		self.totalErrorSpin = rq.errorQuadrature([self.truncErrorSpin,self.extrapolationErrorSpin,self.limitedModesErrorSpin,
+			self.junkErrorSpin,self.downSampleErrorSpin])
+	def setTotalErrorMass(self):
+		"""Adds the errors in quadrature"""
+		self.totalErrorMass = rq.errorQuadrature([self.truncErrorMass,self.extrapolationErrorMass,self.limitedModesErrorMass,
+			self.junkErrorMass,self.downSampleErrorMass])
 
+	def setKickErrors(self):
+		self.setTruncErrorKick()
+		self.setExtrapolationErrorKick()
+		self.setLimitedModesErrorKick()
+		self.setJunkErrorKick()
+		self.setDownSampleErrorKick()
+		self.setTotalErrorKick()
+	
+	def setSpinErrors(self):
+		self.setTruncErrorSpin()
+		self.setExtrapolationErrorSpin()
+		self.setLimitedModesErrorSpin()
+		self.setJunkErrorSpin()
+		self.setDownSampleErrorSpin()
+		self.setTotalErrorSpin()
 
+	def setMassErrors(self):
+		self.setTruncErrorMass()
+		self.setExtrapolationErrorMass()
+		self.setLimitedModesErrorMass()
+		self.setJunkErrorMass()
+		self.setDownSampleErrorMass()
+		self.setTotalErrorMass()
 
+	def setErrors(self):
+		self.setKickErrors()
+		self.setSpinErrors()
+		self.setMassErrors()
 	
 
 

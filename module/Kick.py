@@ -29,15 +29,13 @@ for file in data:
     err = errors.Error(path,directory)
     sim = err.getHighResSim()
     Name = sim.metadata.simulation_name
-    Alt_name_list = sim.metadata.alt_name
+    Alt_name = sim.metadata.alt_name
     err.setKick()
     err.setSpin()
     err.setMass()
+    err.setErrors()
 
 
-    for name in Alt_name_list:
-        if name.startswith('SXS'):
-            Alt_name = name
     q = sim.metadata.initial_mass1/sim.metadata.initial_mass2
     S1 = sim.metadata.relaxed_spin1/(sim.metadata.relaxed_mass1**2)
     S2 = sim.metadata.relaxed_spin2/(sim.metadata.relaxed_mass2**2)
@@ -62,26 +60,26 @@ for file in data:
                                                                             relaxed_eccentricity,no_of_orbits))
     
     
-    spin_error = [[err.truncErrorSpin(),'Truncation'],[err.limitedModesErrorSpin(),'Limited Modes'],
-                  [err.extrapolationErrorSpin(),'Extrapolation'],[err.junkErrorSpin(),'Junk Radiation']
-                  ,[err.downSampleErrorSpin(),'Downsampling']]
-    total_spin_error = rq.errorQuadrature(spin_error)/(sim.metadata.remnant_mass ** 2)
+    spin_error = [[err.truncErrorSpin,'Truncation'],[err.limitedModesErrorSpin,'Limited Modes'],
+                  [err.extrapolationErrorSpin,'Extrapolation'],[err.junkErrorSpin,'Junk Radiation']
+                  ,[err.downSampleErrorSpin,'Downsampling']]
+    total_spin_error = err.totalErrorSpin/(sim.metadata.remnant_mass**2)
     
-    mass_error = [[err.truncErrorMass(),'Truncation'],[err.limitedModesErrorMass(),'Limited Modes'],
-                  [err.extrapolationErrorMass(),'Extrapolation'],[err.junkErrorMass(),'Junk Radiation']
-                  ,[err.downSampleErrorMass(),'Downsampling']]
-    total_mass_error = rq.errorQuadrature(mass_error)
+    mass_error = [[err.truncErrorMass,'Truncation'],[err.limitedModesErrorMass,'Limited Modes'],
+                  [err.extrapolationErrorMass,'Extrapolation'],[err.junkErrorMass,'Junk Radiation']
+                  ,[err.downSampleErrorMass,'Downsampling']]
+    total_mass_error = err.totalErrorMass
 
-    V_trunc = err.truncErrorKick()
-    V_mode = err.limitedModesErrorKick()
-    V_extrap = err.extrapolationErrorKick()
-    V_junk = err.junkErrorKick()
-    V_downsample = err.downSampleErrorKick()
+    V_trunc = err.truncErrorKick
+    V_mode = err.limitedModesErrorKick
+    V_extrap = err.extrapolationErrorKick
+    V_junk = err.junkErrorKick
+    V_downsample = err.downSampleErrorKick
     
     kick_error = [[V_trunc,'Truncation'],[V_mode,'Limited Modes'],
                   [V_extrap,'Extrapolation'],[V_junk,'Junk Radiation']
                   ,[V_downsample,'Downsampling']]
-    total_kick_error = rq.errorQuadrature(kick_error)
+    total_kick_error = err.totalErrorKick
     
     spin_error = sorted(spin_error)
     mass_error = sorted(mass_error)

@@ -29,12 +29,12 @@ KICK = np.array([])
 ETA = np.array([])
 DELTA = np.array([])
 for i in range(len(q)):
-	if kick_error[i] < np.abs(kick_deviation_fit[i]) or True:
-		#	if kick_deviation_fit[i]<0:
-			#err = np.append(err , kick_deviation_fit[i] + kick_error[i])
-		#else:
-			#err = np.append(err,kick_deviation_fit[i] - kick_error[i])
-		err = np.append(err,kick_deviation_fit[i])
+	if kick_error[i] < np.abs(kick_deviation_fit[i]):
+		if kick_deviation_fit[i]<0:
+			err = np.append(err , kick_deviation_fit[i] + kick_error[i])
+		else:
+			err = np.append(err,kick_deviation_fit[i] - kick_error[i])
+		#err = np.append(err,kick_deviation_fit[i])
 		KICK = np.append(KICK,kick[i])
 		ETA = np.append(ETA,eta[i])
 		DELTA = np.append(DELTA,delta[i])
@@ -42,18 +42,18 @@ for i in range(len(q)):
 plt.figure(1)
 surf = plt.scatter(ETA,err,c = KICK, marker = 'o')
 plt.xlabel(r'$\eta$')
-plt.ylabel('Residue after error (km/s)')
-plt.title('Residue from HLZ fit after estimated error substracted')
-plt.colorbar(surf, shrink=0.5, aspect=5,label = 'Calculated Kick (km/s)')
+plt.ylabel('Residue $(km/s)$')
+#plt.title('Residue from HLZ fit after estimated error substracted')
+plt.colorbar(surf, shrink=0.5, aspect=5,label = 'Calculated Kick $(km/s)$')
 plt.savefig('HLZ_eta.jpg')
 #plt.plot(eta,kick_deviation_fit,line)
 plt.show()
 plt.figure(2)
 surf = plt.scatter(DELTA,err,c = KICK, marker = 'o')
 plt.xlabel(r'$\Delta$')
-plt.ylabel('Residue after error (km/s)')
-plt.title('Residue from HLZ fit after estimated error substracted')
-plt.colorbar(surf, shrink=0.5, aspect=5,label = 'Calculated Kick (km/s)')
+plt.ylabel('Residue $(km/s)$')
+#plt.title('Residue from HLZ fit after estimated error substracted')
+plt.colorbar(surf, shrink=0.5, aspect=5,label = 'Calculated Kick $(km/s)$')
 plt.savefig('HLZ_delta.jpg')
 #plt.plot(eta,kick_deviation_fit,line)
 plt.show()
