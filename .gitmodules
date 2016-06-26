@@ -1,4 +1,0 @@
-[submodule "C++/Quaternions"]
-	path = C++/Quaternions
-	url = https://github.com/moble/Quaternions.git
-	branch = master
